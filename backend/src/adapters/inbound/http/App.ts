@@ -1,6 +1,10 @@
 import express from "express";
 import cors from "cors";
+import * as dotenv from "dotenv";
+dotenv.config();
 import { PrismaClient } from "@prisma/client";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 import { ManageRoutesUseCase } from "../../../core/application/ManageRoutesUseCase";
 import { ComplianceUseCase } from "../../../core/application/ComplianceUseCase";
@@ -16,8 +20,10 @@ export function createApp() {
   app.use(cors());
   app.use(express.json());
 
-  // Setup standard adapters
-  const prisma = new PrismaClient();
+  // Setup standard adapters with Prisma 7 explicit driver injection
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const adapter = new PrismaPg(pool);
+  const prisma = new PrismaClient({ adapter } as any);
   const routeRepo = new PrismaRouteRepository(prisma);
   const complianceRepo = new PrismaComplianceRepository(prisma);
 
