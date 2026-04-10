@@ -37,5 +37,11 @@ export function createApp() {
   app.use("/banking", createBankingRouter(complianceUseCase));
   app.use("/pools", createPoolingRouter(complianceUseCase));
 
-  return app;
+  const serverApp = app as any;
+  serverApp.close = async () => {
+    await prisma.$disconnect();
+    await pool.end();
+  };
+
+  return serverApp;
 }

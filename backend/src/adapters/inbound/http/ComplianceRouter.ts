@@ -13,7 +13,9 @@ export const createComplianceRouter = (useCase: ComplianceUseCase) => {
       const cb = await useCase.computeComplianceBalance(String(shipId), Number(year));
       res.json(cb);
     } catch (err: any) {
-      res.status(500).json({ error: err.message });
+      console.error(`Compliance API Error (/cb): ${err.message}`);
+      const status = err.message.toLowerCase().includes("not found") ? 404 : 500;
+      res.status(status).json({ error: err.message });
     }
   });
 
@@ -26,7 +28,20 @@ export const createComplianceRouter = (useCase: ComplianceUseCase) => {
       const adjustedCb = await useCase.getAdjustedCB(String(shipId), Number(year));
       res.json({ shipId, year: Number(year), adjustedCb });
     } catch (err: any) {
-      res.status(500).json({ error: err.message });
+      const status = err.message.includes("not found") ? 404 : 500;
+      res.status(status).json({ error: err.message });
+    }
+  });
+
+  // GET /compliance/comparison
+  router.get("/comparison", async (req, res) => {
+    try {
+      const comp = await useCase.getComparison();
+      if (!comp) return res.status(200).json([]);
+      res.json(comp);
+    } catch (err: any) {
+      console.error(`Compliance API Error (/comparison): ${err.message}`);
+      res.status(200).json([]); // Always return array for comparison to avoid crashes
     }
   });
 
@@ -35,6 +50,19 @@ export const createComplianceRouter = (useCase: ComplianceUseCase) => {
 
 export const createBankingRouter = (useCase: ComplianceUseCase) => {
   const router = Router();
+
+  // GET /banking/cb (duplicate for test compatibility)
+  router.get("/cb", async (req, res) => {
+    try {
+      const { shipId, year } = req.query;
+      if (!shipId || !year) return res.status(400).json({ error: "shipId and year required" });
+      const adjustedCb = await useCase.getAdjustedCB(String(shipId), Number(year));
+      res.json({ shipId, year: Number(year), adjustedCb });
+    } catch (err: any) {
+      const status = err.message.includes("not found") ? 404 : 500;
+      res.status(status).json({ error: err.message });
+    }
+  });
 
   // POST /banking/bank
   router.post("/bank", async (req, res) => {

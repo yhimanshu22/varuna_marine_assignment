@@ -11,12 +11,12 @@ export class AxiosApiClient implements IApiClient {
   }
 
   async setBaseline(routeId: string): Promise<Route> {
-    const res = await axios.post(`${API_BASE}/routes/${routeId}/baseline`);
+    const res = await axios.post(`${API_BASE}/routes/baseline`, { routeId });
     return res.data;
   }
 
   async getComparison(): Promise<Route[]> {
-    const res = await axios.get(`${API_BASE}/routes/comparison`);
+    const res = await axios.get(`${API_BASE}/compliance/comparison`);
     return res.data;
   }
 

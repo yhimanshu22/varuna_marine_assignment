@@ -14,23 +14,14 @@ export const createRoutesRouter = (useCase: ManageRoutesUseCase) => {
     }
   });
 
-  // POST /routes/:id/baseline
-  router.post("/:id/baseline", async (req, res) => {
+  // POST /routes/baseline
+  router.post("/baseline", async (req, res) => {
     try {
-      const route = await useCase.setBaseline(req.params.id);
+      const { routeId } = req.body;
+      const route = await useCase.setBaseline(routeId);
       res.json(route);
     } catch (err: any) {
       res.status(400).json({ error: err.message });
-    }
-  });
-
-  // GET /routes/comparison
-  router.get("/comparison", async (req, res) => {
-    try {
-      const comp = await useCase.getComparison();
-      res.json(comp);
-    } catch (err: any) {
-      res.status(500).json({ error: err.message });
     }
   });
 
