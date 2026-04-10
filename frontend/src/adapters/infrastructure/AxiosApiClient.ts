@@ -1,6 +1,6 @@
 import axios from "axios";
-import { IApiClient } from "../../core/ports/IApiClient";
-import { Route, ShipCompliance, Pool } from "../../core/domain/Entities";
+import type { IApiClient } from "../../core/ports/IApiClient";
+import type { Route, ShipCompliance, Pool } from "../../core/domain/Entities";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:3001";
 

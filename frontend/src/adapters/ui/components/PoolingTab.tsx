@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { apiClient } from "../../infrastructure/AxiosApiClient";
-import { Pool } from "../../../core/domain/Entities";
+import type { Pool } from "../../../core/domain/Entities";
 
 export function PoolingTab() {
   const [year, setYear] = useState(2025);

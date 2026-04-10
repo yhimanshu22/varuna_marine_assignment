@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiClient } from "../../infrastructure/AxiosApiClient";
-import { Route } from "../../../core/domain/Entities";
+import type { Route } from "../../../core/domain/Entities";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
 
 export function CompareTab() {

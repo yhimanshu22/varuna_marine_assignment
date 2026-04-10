@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react";
 import { apiClient } from "../../infrastructure/AxiosApiClient";
-import { Route } from "../../../core/domain/Entities";
+import type { Route } from "../../../core/domain/Entities";
 
 export function RoutesTab() {
   const [routes, setRoutes] = useState<Route[]>([]);
   const [filterType, setFilterType] = useState<string>("");
 
   const fetchRoutes = async () => {
-    const data = await apiClient.getRoutes();
-    setRoutes(data);
+    try {
+      console.log("Fetching routes from:", import.meta.env.VITE_API_BASE_URL || "http://localhost:3001");
+      const data = await apiClient.getRoutes();
+      console.log("Received routes:", data);
+      setRoutes(data);
+    } catch (error) {
+      console.error("Failed to fetch routes:", error);
+    }
   };
 
   useEffect(() => {

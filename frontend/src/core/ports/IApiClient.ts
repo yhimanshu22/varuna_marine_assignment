@@ -1,4 +1,4 @@
-import { Route, ShipCompliance, Pool } from "../domain/Entities";
+import type { Route, ShipCompliance, Pool } from "../domain/Entities";
 
 export interface IApiClient {
   getRoutes(): Promise<Route[]>;
