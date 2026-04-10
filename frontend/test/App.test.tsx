@@ -15,21 +15,28 @@ vi.mock('../src/adapters/infrastructure/AxiosApiClient', () => ({
 }));
 
 describe("App Layout", () => {
-  it("renders the main dashboard heading", () => {
+  it("renders the main dashboard heading", async () => {
     render(<App />);
-    expect(screen.getByText(/FuelEU Maritime Dashboard/i)).toBeDefined();
+    expect(screen.getByText(/Varuna Marine Services/i)).toBeDefined();
+    expect(screen.getByText(/Compliance Dashboard/i)).toBeDefined();
   });
 
-  it("renders tab navigation buttons", () => {
+  it("renders tab navigation buttons", async () => {
     render(<App />);
     expect(screen.getByText("Routes")).toBeDefined();
-    expect(screen.getByText("Compare")).toBeDefined();
+    expect(screen.getByText("Analytics")).toBeDefined();
     expect(screen.getByText("Banking")).toBeDefined();
     expect(screen.getByText("Pooling")).toBeDefined();
   });
 
-  it("defaults to the Routes tab", () => {
-    const { container } = render(<App />);
-    expect(container.querySelector('.bg-blue-100')?.textContent).toContain("Routes");
+  it("defaults to the Routes tab", async () => {
+    // We use findByText to wait for the async data fetch in useEffect
+    render(<App />);
+    const routesBtn = await screen.findByText("Routes");
+    expect(routesBtn).toBeDefined();
+    
+    // In our new UI, the active tab has 'text-teal-700' and 'bg-white'
+    const activeBtn = document.querySelector('.text-teal-700.bg-white');
+    expect(activeBtn?.textContent).toContain("Routes");
   });
 });

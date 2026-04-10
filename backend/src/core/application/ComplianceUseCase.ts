@@ -165,6 +165,13 @@ export class ComplianceUseCase {
   }
 
   /**
+   * Fetches banked entries for a ship/year.
+   */
+  async getBankedEntries(shipId: string, year: number): Promise<BankEntry[]> {
+    return this.complianceRepo.getBankedEntries(shipId, year);
+  }
+
+  /**
    * Fetches analytical comparison for all vessels.
    */
   async getComparison() {

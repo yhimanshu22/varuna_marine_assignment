@@ -5,6 +5,8 @@ import type { Route } from "../../../core/domain/Entities";
 export function RoutesTab() {
   const [routes, setRoutes] = useState<Route[]>([]);
   const [filterType, setFilterType] = useState<string>("");
+  const [filterFuel, setFilterFuel] = useState<string>("");
+  const [filterYear, setFilterYear] = useState<string>("");
 
   const fetchRoutes = async () => {
     try {
@@ -24,8 +26,16 @@ export function RoutesTab() {
     fetchRoutes();
   };
 
-  const filteredRoutes = routes.filter(r => filterType ? r.vesselType === filterType : true);
+  const filteredRoutes = routes.filter(r => {
+    const matchType = filterType ? r.vesselType === filterType : true;
+    const matchFuel = filterFuel ? r.fuelType === filterFuel : true;
+    const matchYear = filterYear ? r.year.toString() === filterYear : true;
+    return matchType && matchFuel && matchYear;
+  });
+
   const vesselTypes = Array.from(new Set(routes.map(r => r.vesselType)));
+  const fuelTypes = Array.from(new Set(routes.map(r => r.fuelType)));
+  const years = Array.from(new Set(routes.map(r => r.year.toString())));
 
   return (
     <div className="space-y-6">
@@ -34,16 +44,42 @@ export function RoutesTab() {
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Maritime Routes</h2>
           <p className="text-sm text-slate-500">Overview of vessel performance and FuelEU compliance telemetry.</p>
         </div>
-        <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/50 p-2 rounded-xl border border-slate-200 dark:border-slate-800">
-          <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-2">Vessel Filter</label>
-          <select 
-            value={filterType} 
-            onChange={e => setFilterType(e.target.value)} 
-            className="bg-transparent border-none text-sm font-medium focus:ring-0 cursor-pointer text-teal-700 dark:text-teal-400"
-          >
-            <option value="">All Vessels</option>
-            {vesselTypes.map(t => <option key={t} value={t}>{t}</option>)}
-          </select>
+        <div className="flex flex-wrap items-center gap-3 bg-slate-50 dark:bg-slate-900/50 p-2 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="flex items-center">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-2 mr-2">Vessel</label>
+            <select 
+              value={filterType} 
+              onChange={e => setFilterType(e.target.value)} 
+              className="bg-transparent border-none text-xs font-bold focus:ring-0 cursor-pointer text-teal-700 dark:text-teal-400"
+            >
+              <option value="">All</option>
+              {vesselTypes.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </div>
+          <div className="w-px h-4 bg-slate-200 dark:bg-slate-800 mx-1"></div>
+          <div className="flex items-center">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mr-2">Fuel</label>
+            <select 
+              value={filterFuel} 
+              onChange={e => setFilterFuel(e.target.value)} 
+              className="bg-transparent border-none text-xs font-bold focus:ring-0 cursor-pointer text-teal-700 dark:text-teal-400"
+            >
+              <option value="">All</option>
+              {fuelTypes.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </div>
+          <div className="w-px h-4 bg-slate-200 dark:bg-slate-800 mx-1"></div>
+          <div className="flex items-center">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mr-2">Year</label>
+            <select 
+              value={filterYear} 
+              onChange={e => setFilterYear(e.target.value)} 
+              className="bg-transparent border-none text-xs font-bold focus:ring-0 cursor-pointer text-teal-700 dark:text-teal-400"
+            >
+              <option value="">All</option>
+              {years.map(y => <option key={y} value={y}>{y}</option>)}
+            </select>
+          </div>
         </div>
       </div>
       
@@ -57,6 +93,7 @@ export function RoutesTab() {
               <th className="px-4 py-2 text-center">Year</th>
               <th className="px-4 py-2">GHG Intensity</th>
               <th className="px-4 py-2">Consumption</th>
+              <th className="px-4 py-2">Emissions (t)</th>
               <th className="px-4 py-2 text-right">Operations</th>
             </tr>
           </thead>
@@ -88,6 +125,9 @@ export function RoutesTab() {
                 </td>
                 <td className="px-4 py-4 border-y border-transparent group-hover:border-teal-500/20">
                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{r.fuelConsumption.toLocaleString()} t</span>
+                </td>
+                <td className="px-4 py-4 border-y border-transparent group-hover:border-teal-500/20">
+                   <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{r.totalEmissions.toLocaleString()}</span>
                 </td>
                 <td className="px-4 py-4 rounded-r-2xl border-y border-r border-transparent group-hover:border-teal-500/20 text-right">
                   <div className="flex items-center justify-end gap-3">

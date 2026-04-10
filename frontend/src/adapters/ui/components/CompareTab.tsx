@@ -24,8 +24,8 @@ export function CompareTab() {
               <tr className="text-slate-400 text-[10px] font-bold uppercase tracking-widest border-b border-slate-50 dark:border-slate-800">
                 <th className="px-6 py-4">Vessel Identifier</th>
                 <th className="px-6 py-4">GHG Intensity</th>
-                <th className="px-6 py-4">Dev. from Baseline</th>
-                <th className="px-6 py-4 text-right">Status</th>
+                <th className="px-6 py-4">Dev. from Baseline (% Diff)</th>
+                <th className="px-6 py-4 text-right">Status (Compliant)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
@@ -38,14 +38,14 @@ export function CompareTab() {
                    <td className="px-6 py-4 text-sm font-medium text-slate-600 dark:text-slate-400">
                      {r.ghgIntensity.toFixed(2)}
                    </td>
-                   <td className={`px-6 py-4 text-sm font-bold ${Number(r.percentDiff) > 0 ? "text-rose-500" : "text-emerald-500"}`}>
-                     {Number(r.percentDiff) > 0 ? "+" : ""}{r.percentDiff}%
+                   <td className={`px-6 py-4 text-sm font-bold ${Number((r as any).percentDiff) > 0 ? "text-rose-500" : "text-emerald-500"}`}>
+                     {Number((r as any).percentDiff) > 0 ? "+" : ""}{(r as any).percentDiff}%
                    </td>
                    <td className="px-6 py-4 text-right">
-                     {r.isCompliant ? (
-                       <span className="text-emerald-500 font-bold text-xs">COMPLIANT</span>
+                     {(r as any).compliant ? (
+                       <span className="text-emerald-500 font-bold text-xs">Compliant ✅</span>
                      ) : (
-                       <span className="text-rose-500 font-bold text-xs">NON-COMPLIANT</span>
+                       <span className="text-rose-500 font-bold text-xs">Non-Compliant ❌</span>
                      )}
                    </td>
                 </tr>

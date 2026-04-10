@@ -1,13 +1,14 @@
 # Reflection
 
 ## What I Learned Using AI Agents
-Using AI agents allows for a rapid transformation from theoretical architectures into working skeleton codebases. Designing a proper Hexagonal Architecture often requires significant boilerplate to correctly invert dependencies. AI agents excelled at scaffolding these boundaries accurately, allowing me to focus exclusively on describing core domain rules like the FuelEU target values (89.3368) instead of repetitive repository typings. 
+Using AI agents allows for a rapid transformation from theoretical architectures into working skeleton codebases. I learned that while agents are incredibly fast at scaffolding, the "last 10%" (integration, environment-specific dependency conflicts, and path synchronization) still requires precise guidance and developer intuition.
 
 ## Efficiency Gains vs Manual Coding
-- **Boilerplate generation**: The system quickly wired up Prisma ORM, Express routers, and TS Configs—a manual process that often consumes the first few hours of a project. Using parallel CLI commands with the agent drastically limited local environment setup bottlenecks.
-- **Architectural consistency**: The AI effectively maintained context over directory layouts (`adapters/outbound`, `inbound/http`, `core/domain`), minimizing human translation errors when adhering to clean architecture.
-- **Data UI Rendering**: Writing repetitive Table layouts and mapping complex nested structures in Tailwind CSS took seconds versus traditional trial-and-error hand coding.
+- **Boilerplate & CSS**: The system wired up Prisma ORM and built a premium, glassmorphism-themed UI in minutes. Manual CSS for this level of fidelity (grain textures, backdrop blurs) would have taken hours of iteration.
+- **Logic Translation**: The AI effectively maintained context over directory layouts, ensuring that business rules like the FuelEU target values (89.3368) were consistently applied from the backend domain to the frontend chart labels.
+- **Integration Testing**: Rapidly generating `supertest` suites allowed for a robust verification phase that caught route-naming bugs that might have otherwise persisted to production.
 
 ## Improvements I’d Make Next Time
-- **Dependency Flow**: I noticed some tool execution race conditions locally on Windows when creating UI directories while package installations were ongoing. Next time, I would write a single comprehensive declarative file (`package.json` scaffolding script) instead of relying on granular shell commands.
-- **Iterative Testing**: I would prompt the agent to explicitly mock out the HTTP inbound layer earlier to run jest tests *before* writing the API routes, maintaining an authentic Test-Driven Development (TDD) workflow alongside the Hexagonal rules.
+- **Dependency Management**: I encountered a major version conflict between Jest 30 and TypeScript 6 (bleeding edge versions). Next time, I would explicitly lock dev-dependencies to stable LTS versions at the start to avoid "Test Suite Failed" crashes.
+- **Structural Sanity Checks**: I observed that multi-file edits can sometimes leave dangling closing tags in JSX. I would implement a manual or automated "Linter-first" check after large structural refactors like the full-screen expansion.
+- **Mocking Strategy**: I would prompt the agent to explicitly mock out the HTTP inbound layer earlier to run tests *before* finalizing the UI, maintaining a stricter TDD workflow.

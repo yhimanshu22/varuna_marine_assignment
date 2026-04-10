@@ -15,10 +15,22 @@ import { PrismaComplianceRepository } from "../../outbound/postgres/PrismaCompli
 import { createRoutesRouter } from "./RoutesRouter";
 import { createComplianceRouter, createBankingRouter, createPoolingRouter } from "./ComplianceRouter";
 
+import { Logger } from "../../../shared/utils/Logger";
+
 export function createApp() {
   const app = express();
   app.use(cors());
   app.use(express.json());
+
+  // Request Logging Middleware
+  app.use((req, res, next) => {
+    const start = Date.now();
+    res.on("finish", () => {
+      const duration = Date.now() - start;
+      Logger.info(`${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`);
+    });
+    next();
+  });
 
   // Setup standard adapters with Prisma 7 explicit driver injection
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -39,6 +51,7 @@ export function createApp() {
 
   const serverApp = app as any;
   serverApp.close = async () => {
+    Logger.info("Shutting down server...");
     await prisma.$disconnect();
     await pool.end();
   };

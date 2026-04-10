@@ -11,12 +11,12 @@ export class AxiosApiClient implements IApiClient {
   }
 
   async setBaseline(routeId: string): Promise<Route> {
-    const res = await axios.post(`${API_BASE}/routes/baseline`, { routeId });
+    const res = await axios.post(`${API_BASE}/routes/${routeId}/baseline`);
     return res.data;
   }
 
   async getComparison(): Promise<Route[]> {
-    const res = await axios.get(`${API_BASE}/compliance/comparison`);
+    const res = await axios.get(`${API_BASE}/routes/comparison`);
     return res.data;
   }
 
@@ -37,6 +37,11 @@ export class AxiosApiClient implements IApiClient {
 
   async applySurplus(targetShipId: string, fromShipId: string, year: number, amount: number): Promise<any> {
     const res = await axios.post(`${API_BASE}/banking/apply`, { targetShipId, fromShipId, year, amount });
+    return res.data;
+  }
+
+  async getBankingRecords(shipId: string, year: number): Promise<any[]> {
+    const res = await axios.get(`${API_BASE}/banking/records`, { params: { shipId, year } });
     return res.data;
   }
 

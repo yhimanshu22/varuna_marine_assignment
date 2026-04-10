@@ -26,31 +26,34 @@ describe("FuelEU Maritime API Integration Tests", () => {
     });
 
     it("should set baseline for a route", async () => {
-      // Assuming R001 exists from seed
       const res = await request(app)
-        .post("/routes/baseline")
-        .send({ routeId: "R001" });
+        .post("/routes/R001/baseline");
       expect(res.status).toBe(200);
     });
-  });
 
-  describe("Compliance API (/compliance)", () => {
     it("should fetch comparison data", async () => {
-      const res = await request(app).get("/compliance/comparison");
+      const res = await request(app).get("/routes/comparison");
       expect(res.status).toBe(200);
       expect(Array.isArray(res.body)).toBe(true);
+      if (res.body.length > 0) {
+        expect(res.body[0]).toHaveProperty("compliant");
+      }
     });
-  });
 
-  describe("Banking API (/banking)", () => {
     it("should fetch adjusted CB for a ship", async () => {
-      const res = await request(app).get("/banking/cb?shipId=R001&year=2025");
+      const res = await request(app).get("/compliance/adjusted-cb?shipId=R001&year=2025");
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty("adjustedCb");
     });
 
+    it("should fetch banking records", async () => {
+        const res = await request(app).get("/banking/records?shipId=R001&year=2025");
+        expect(res.status).toBe(200);
+        expect(Array.isArray(res.body)).toBe(true);
+    });
+
     it("should return error for non-existent ship Adjusted CB", async () => {
-      const res = await request(app).get("/banking/cb?shipId=INVALID&year=2025");
+      const res = await request(app).get("/compliance/adjusted-cb?shipId=INVALID&year=2025");
       expect(res.status).toBe(404);
     });
 

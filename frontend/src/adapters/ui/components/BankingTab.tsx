@@ -5,6 +5,7 @@ export function BankingTab() {
   const [shipId, setShipId] = useState("");
   const [year, setYear] = useState(2025);
   const [cbData, setCbData] = useState<{ shipId: string, year: number, adjustedCb: number } | null>(null);
+  const [records, setRecords] = useState<any[]>([]);
   
   const [targetShipId, setTargetShipId] = useState("");
   const [amount, setAmount] = useState(0);
@@ -15,6 +16,8 @@ export function BankingTab() {
       setMessage(null);
       const data = await apiClient.getAdjustedCB(shipId, year);
       setCbData(data);
+      const recs = await apiClient.getBankingRecords(shipId, year);
+      setRecords(recs);
     } catch (e: any) {
       setMessage({ text: e.response?.data?.error || "Error fetching CB", type: 'error' });
     }
@@ -92,15 +95,30 @@ export function BankingTab() {
           {cbData && (
             <div className="mt-8 p-6 bg-teal-50/30 dark:bg-teal-900/10 border border-teal-500/10 rounded-2xl animate-in zoom-in-95 duration-300">
               <div className="flex justify-between items-start mb-4">
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-tight">Adjusted CB for <span className="text-teal-600">{cbData.shipId}</span></p>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-tight">Financial Status for <span className="text-teal-600">{cbData.shipId}</span></p>
                 <span className="text-[10px] font-mono text-slate-400">{cbData.year}</span>
               </div>
               
-              <div className="flex items-baseline gap-2 mb-6">
-                <span className={`text-4xl font-black ${cbData.adjustedCb >= 0 ? "text-emerald-500" : "text-rose-500"}`}>
+              <div className="grid grid-cols-3 gap-2 mb-6 text-center">
+                 <div className="p-2 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-100 dark:border-slate-800">
+                    <span className="block text-[9px] uppercase font-bold text-slate-400 mb-1">cb_before</span>
+                    <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{(cbData.adjustedCb - records.reduce((s, r) => s + r.amountGco2eq, 0)).toLocaleString()}</span>
+                 </div>
+                 <div className="p-2 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-100 dark:border-slate-800">
+                    <span className="block text-[9px] uppercase font-bold text-slate-400 mb-1">applied</span>
+                    <span className="text-xs font-bold text-teal-600">{records.reduce((s, r) => s + r.amountGco2eq, 0).toLocaleString()}</span>
+                 </div>
+                 <div className="p-2 bg-slate-900 rounded-lg shadow-md border border-slate-800">
+                    <span className="block text-[9px] uppercase font-bold text-teal-400 mb-1">cb_after</span>
+                    <span className="text-xs font-bold text-white">{cbData.adjustedCb.toLocaleString()}</span>
+                 </div>
+              </div>
+
+              <div className="flex items-baseline gap-2 mb-6 justify-center">
+                <span className={`text-3xl font-black ${cbData.adjustedCb >= 0 ? "text-emerald-500" : "text-rose-500"}`}>
                   {cbData.adjustedCb.toLocaleString(undefined, {maximumFractionDigits: 0})}
                 </span>
-                <span className="text-xs font-medium text-slate-400">gCO₂eq</span>
+                <span className="text-[10px] font-medium text-slate-400">NET CB</span>
               </div>
 
               {cbData.adjustedCb > 0 && (
