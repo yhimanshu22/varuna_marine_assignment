@@ -8,9 +8,7 @@ export function RoutesTab() {
 
   const fetchRoutes = async () => {
     try {
-      console.log("Fetching routes from:", import.meta.env.VITE_API_BASE_URL || "http://localhost:3001");
       const data = await apiClient.getRoutes();
-      console.log("Received routes:", data);
       setRoutes(data);
     } catch (error) {
       console.error("Failed to fetch routes:", error);
@@ -30,62 +28,93 @@ export function RoutesTab() {
   const vesselTypes = Array.from(new Set(routes.map(r => r.vesselType)));
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Routes Data</h2>
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-teal-500/10 pb-6">
         <div>
-          <label className="mr-2 font-medium">Filter Vessel Type:</label>
-          <select value={filterType} onChange={e => setFilterType(e.target.value)} className="border p-1 rounded">
-            <option value="">All</option>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Maritime Routes</h2>
+          <p className="text-sm text-slate-500">Overview of vessel performance and FuelEU compliance telemetry.</p>
+        </div>
+        <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/50 p-2 rounded-xl border border-slate-200 dark:border-slate-800">
+          <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-2">Vessel Filter</label>
+          <select 
+            value={filterType} 
+            onChange={e => setFilterType(e.target.value)} 
+            className="bg-transparent border-none text-sm font-medium focus:ring-0 cursor-pointer text-teal-700 dark:text-teal-400"
+          >
+            <option value="">All Vessels</option>
             {vesselTypes.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
       </div>
       
-      <table className="w-full text-left border">
-        <thead>
-          <tr className="bg-gray-100 border-b">
-            <th className="p-2">Route ID</th>
-            <th className="p-2">Vessel Type</th>
-            <th className="p-2">Fuel Type</th>
-            <th className="p-2">Year</th>
-            <th className="p-2">GHG Int (gCO₂e/MJ)</th>
-            <th className="p-2">Fuel (t)</th>
-            <th className="p-2">Dist (km)</th>
-            <th className="p-2">Baseline</th>
-            <th className="p-2">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredRoutes.map(r => (
-            <tr key={r.id} className="border-b hover:bg-gray-50">
-              <td className="p-2 font-mono">{r.routeId}</td>
-              <td className="p-2">{r.vesselType}</td>
-              <td className="p-2">{r.fuelType}</td>
-              <td className="p-2">{r.year}</td>
-              <td className="p-2 font-semibold text-blue-800">{r.ghgIntensity}</td>
-              <td className="p-2">{r.fuelConsumption}</td>
-              <td className="p-2">{r.distance}</td>
-              <td className="p-2">{r.isBaseline ? "⭐" : ""}</td>
-              <td className="p-2">
-                {!r.isBaseline && (
-                  <button 
-                    onClick={() => handleSetBaseline(r.routeId)}
-                    className="bg-blue-600 text-white px-3 py-1 text-xs rounded shadow hover:bg-blue-700"
-                  >
-                    Set Baseline
-                  </button>
-                )}
-              </td>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-separate border-spacing-y-2">
+          <thead>
+            <tr className="text-slate-400 text-[11px] font-bold uppercase tracking-[0.2em]">
+              <th className="px-4 py-2">Vessel/Route</th>
+              <th className="px-4 py-2">Type</th>
+              <th className="px-4 py-2">Fuel Spec</th>
+              <th className="px-4 py-2 text-center">Year</th>
+              <th className="px-4 py-2">GHG Intensity</th>
+              <th className="px-4 py-2">Consumption</th>
+              <th className="px-4 py-2 text-right">Operations</th>
             </tr>
-          ))}
-          {filteredRoutes.length === 0 && (
-            <tr>
-              <td colSpan={9} className="p-4 text-center text-gray-500">No routes found.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredRoutes.map(r => (
+              <tr key={r.id} className="group bg-white dark:bg-slate-800/20 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 transition-colors border border-slate-100 dark:border-slate-800">
+                <td className="px-4 py-4 rounded-l-2xl border-y border-l border-transparent group-hover:border-teal-500/20">
+                  <div className="flex flex-col">
+                    <span className="font-bold text-slate-900 dark:text-slate-100">{r.routeId}</span>
+                    <span className="text-[10px] text-slate-400 font-mono">DIST: {r.distance.toLocaleString()} km</span>
+                  </div>
+                </td>
+                <td className="px-4 py-4 border-y border-transparent group-hover:border-teal-500/20">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-slate-600 dark:text-slate-400">
+                    {r.vesselType}
+                  </span>
+                </td>
+                <td className="px-4 py-4 border-y border-transparent group-hover:border-teal-500/20">
+                  <span className="text-sm font-medium text-slate-600 dark:text-slate-300">{r.fuelType}</span>
+                </td>
+                <td className="px-4 py-4 text-center border-y border-transparent group-hover:border-teal-500/20 text-slate-500 text-sm">
+                  {r.year}
+                </td>
+                <td className="px-4 py-4 border-y border-transparent group-hover:border-teal-500/20">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-teal-600 dark:text-teal-400">{r.ghgIntensity}</span>
+                    <span className="text-[9px] text-slate-400 uppercase tracking-tighter">gCO₂e/MJ</span>
+                  </div>
+                </td>
+                <td className="px-4 py-4 border-y border-transparent group-hover:border-teal-500/20">
+                   <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{r.fuelConsumption.toLocaleString()} t</span>
+                </td>
+                <td className="px-4 py-4 rounded-r-2xl border-y border-r border-transparent group-hover:border-teal-500/20 text-right">
+                  <div className="flex items-center justify-end gap-3">
+                    {r.isBaseline ? (
+                      <span className="px-3 py-1 bg-amber-500/10 text-amber-500 text-[9px] font-bold uppercase tracking-widest rounded-full border border-amber-500/20">
+                        Baseline ⭐
+                      </span>
+                    ) : (
+                      <button 
+                        onClick={() => handleSetBaseline(r.routeId)}
+                        className="opacity-0 group-hover:opacity-100 px-4 py-1.5 bg-slate-900 dark:bg-teal-600 text-white text-[10px] font-bold rounded-lg transition-all hover:scale-105 active:scale-95 shadow-lg shadow-black/5"
+                      >
+                        SET BASELINE
+                      </button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+            {filteredRoutes.length === 0 && (
+              <tr>
+                <td colSpan={7} className="px-4 py-12 text-center text-slate-400 italic">No routes found matching your criteria.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

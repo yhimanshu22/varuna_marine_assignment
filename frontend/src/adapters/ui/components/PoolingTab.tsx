@@ -19,7 +19,7 @@ export function PoolingTab() {
       
       const newPool = await apiClient.createPool(year, members);
       setPool(newPool);
-      setMessage({ text: `Pool created successfully! Created At: ${new Date(newPool.createdAt).toLocaleString()}`, type: 'success' });
+      setMessage({ text: `Pool created successfully for ${members.length} vessels.`, type: 'success' });
     } catch (e: any) {
       setMessage({ text: e.response?.data?.error || "Error creating pool", type: 'error' });
       setPool(null);
@@ -27,67 +27,95 @@ export function PoolingTab() {
   };
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-xl font-bold">Pooling (Article 21)</h2>
+    <div className="space-y-8 animate-in fade-in duration-700">
+      <div className="border-b border-teal-500/10 pb-6">
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Compliance Pooling</h2>
+        <p className="text-sm text-slate-500">Form a compliance pool (Article 21) to aggregate and distribute compliance balances.</p>
+      </div>
       
-      <div className="bg-gray-50 p-4 rounded border max-w-xl">
-         <h3 className="font-semibold mb-3">Create a new Pool</h3>
+      <div className="bg-white dark:bg-slate-900/40 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm max-w-2xl">
+         <div className="flex items-center gap-3 mb-6">
+            <div className="w-8 h-8 rounded-lg bg-teal-500/10 flex items-center justify-center">
+              <span className="text-teal-600 font-bold text-xs">NEW</span>
+            </div>
+            <h3 className="font-bold text-slate-900 dark:text-white">Initialize Compliance Pool</h3>
+         </div>
          
-         <div className="flex flex-col space-y-3">
-           <div>
-             <label className="block text-sm font-medium mb-1">Year</label>
-             <input type="number" value={year} onChange={e => setYear(Number(e.target.value))} className="border p-2 rounded w-full"/>
-           </div>
-           
-           <div>
-             <label className="block text-sm font-medium mb-1">Ship IDs (comma separated)</label>
-             <input 
-               type="text" 
-               placeholder="e.g. R001, R002, R003" 
-               value={membersInput} 
-               onChange={e => setMembersInput(e.target.value)} 
-               className="border p-2 rounded w-full"
-             />
-             <p className="text-xs text-gray-500 mt-1">Requires at least one surplus ship if there are deficits.</p>
-           </div>
+         <div className="space-y-6">
+            <div className="grid grid-cols-4 gap-4">
+              <div className="col-span-1 space-y-1">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Year</label>
+                <input 
+                  type="number" 
+                  value={year} 
+                  onChange={e => setYear(Number(e.target.value))} 
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-3 rounded-xl focus:ring-2 focus:ring-teal-500/20 outline-none transition-all"
+                />
+              </div>
+              <div className="col-span-3 space-y-1">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Ship IDs (Member List)</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. R001, R002, R003" 
+                  value={membersInput} 
+                  onChange={e => setMembersInput(e.target.value)} 
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-3 rounded-xl focus:ring-2 focus:ring-teal-500/20 outline-none transition-all"
+                />
+              </div>
+            </div>
+            
+            <p className="text-[11px] text-slate-500 leading-relaxed italic bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
+              Note: Articles 21(1) and 21(2) allow companies to form a pool where ships with compliant balances can offset ships with deficits.
+            </p>
 
-           <button onClick={handleCreatePool} className="bg-green-600 text-white p-2 rounded hover:bg-green-700">
-             Create Pool
-           </button>
+            <button 
+              onClick={handleCreatePool} 
+              className="w-full bg-gradient-to-r from-teal-600 to-teal-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-teal-500/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
+            >
+              GENERATE ALLOCATION MAP
+            </button>
          </div>
 
          {message && (
-          <div className={`mt-4 p-4 rounded ${message.type === 'error' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+          <div className={`mt-6 p-4 rounded-xl text-xs font-bold border ${message.type === 'error' ? 'bg-rose-50 border-rose-100 text-rose-600 dark:bg-rose-900/10 dark:border-rose-900/20' : 'bg-emerald-50 border-emerald-100 text-emerald-600 dark:bg-emerald-900/10 dark:border-emerald-900/20'}`}>
             {message.text}
           </div>
         )}
       </div>
 
       {pool && pool.members && (
-        <div className="mt-8">
-          <h3 className="text-lg font-bold">Pool Allocation Details</h3>
-          <table className="w-full text-left border mt-4">
-            <thead>
-              <tr className="bg-gray-100 border-b">
-                <th className="p-2">Ship ID</th>
-                <th className="p-2">CB Before Pool</th>
-                <th className="p-2">CB After Pool</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pool.members.map(m => (
-                <tr key={m.shipId} className="border-b">
-                  <td className="p-2 font-mono">{m.shipId}</td>
-                  <td className="p-2">{m.cbBefore.toLocaleString()} gCO₂eq</td>
-                  <td className="p-2 font-bold">{m.cbAfter.toLocaleString()} gCO₂eq</td>
+        <div className="mt-8 animate-in slide-in-from-top-4 duration-500">
+          <div className="flex justify-between items-end mb-4">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Allocation Distribution List</h3>
+            <span className="text-[10px] text-slate-400 font-mono uppercase">POOLED CB: {pool.members.reduce((sum, m) => sum + m.cbAfter, 0).toLocaleString()} gCO₂eq</span>
+          </div>
+          
+          <div className="bg-white dark:bg-slate-900/40 rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="text-slate-400 text-[10px] font-bold uppercase tracking-widest border-b border-slate-50 dark:border-slate-800">
+                  <th className="px-6 py-4">Vessel ID</th>
+                  <th className="px-6 py-4">Initial Balance</th>
+                  <th className="px-6 py-4">Pooled Balance</th>
+                  <th className="px-6 py-4 text-right">Adjustment</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <p className="text-sm text-gray-600 mt-2 font-medium">
-            Pool Total CB Before: {pool.members.reduce((sum, m) => sum + m.cbBefore, 0).toLocaleString()} | 
-            Pool Total CB After: {pool.members.reduce((sum, m) => sum + m.cbAfter, 0).toLocaleString()}
-          </p>
+              </thead>
+              <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+                {pool.members.map(m => (
+                  <tr key={m.shipId} className="hover:bg-teal-50/10 transition-colors">
+                    <td className="px-6 py-4 font-bold text-slate-900 dark:text-slate-100">{m.shipId}</td>
+                    <td className="px-6 py-4 text-sm text-slate-500 font-mono">{m.cbBefore.toLocaleString()}</td>
+                    <td className="px-6 py-4 text-sm font-bold text-teal-600 dark:text-teal-400 font-mono">{m.cbAfter.toLocaleString()}</td>
+                    <td className="px-6 py-4 text-right">
+                       <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${m.cbAfter > m.cbBefore ? "bg-emerald-100 text-emerald-600" : "bg-rose-100 text-rose-600"}`}>
+                         {m.cbAfter > m.cbBefore ? "SURPLUS GAIN" : "DEFICIT OFFSET"}
+                       </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

@@ -43,77 +43,139 @@ export function BankingTab() {
   };
 
   return (
-    <div className="space-y-8">
-      <h2 className="text-xl font-bold">Banking Operations (Article 20)</h2>
-      
-      {/* Search CB */}
-      <div className="bg-gray-50 p-4 rounded border">
-        <h3 className="font-semibold mb-3">1. Check Vessel Compliance Balance</h3>
-        <div className="flex space-x-2">
-          <input 
-            type="text" 
-            placeholder="Ship/Route ID (e.g. R001)" 
-            value={shipId} 
-            onChange={e => setShipId(e.target.value)}
-            className="border p-2 rounded w-48"
-          />
-          <input 
-            type="number" 
-            placeholder="Year" 
-            value={year} 
-            onChange={e => setYear(Number(e.target.value))}
-            className="border p-2 rounded w-24"
-          />
-          <button onClick={fetchCB} className="bg-blue-600 text-white px-4 py-2 rounded">Select Ship</button>
-        </div>
-        
-        {cbData && (
-          <div className="mt-4 p-4 bg-white border rounded">
-            <p className="text-lg">Current Adjusted CB for <strong>{cbData.shipId}</strong> in <strong>{cbData.year}</strong></p>
-            <p className={`text-2xl font-bold mt-2 ${cbData.adjustedCb >= 0 ? "text-green-600" : "text-red-600"}`}>
-              {cbData.adjustedCb.toLocaleString(undefined, {maximumFractionDigits: 2})} gCO₂eq
-              {cbData.adjustedCb >= 0 ? " (Surplus)" : " (Deficit)"}
-            </p>
-            {cbData.adjustedCb > 0 && (
-              <button onClick={handleBank} className="mt-2 bg-green-500 text-white px-3 py-1 rounded">Bank Surplus</button>
-            )}
-          </div>
-        )}
+    <div className="space-y-8 animate-in fade-in duration-700">
+      <div className="border-b border-teal-500/10 pb-6">
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Banking Operations</h2>
+        <p className="text-sm text-slate-500">Manage surplus compliance balances under FuelEU Article 20.</p>
       </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Search CB */}
+        <div className="bg-white dark:bg-slate-900/40 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-8 h-8 rounded-lg bg-teal-500/10 flex items-center justify-center">
+              <span className="text-teal-600 font-bold text-xs">01</span>
+            </div>
+            <h3 className="font-bold text-slate-900 dark:text-white">Verify Compliance Balance</h3>
+          </div>
+          
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Vessel ID</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. R001" 
+                  value={shipId} 
+                  onChange={e => setShipId(e.target.value)}
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Target Year</label>
+                <input 
+                  type="number" 
+                  value={year} 
+                  onChange={e => setYear(Number(e.target.value))}
+                   className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all"
+                />
+              </div>
+            </div>
+            <button 
+              onClick={fetchCB} 
+              className="w-full bg-slate-900 dark:bg-teal-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-teal-500/10 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
+              Check Balance
+            </button>
+          </div>
+          
+          {cbData && (
+            <div className="mt-8 p-6 bg-teal-50/30 dark:bg-teal-900/10 border border-teal-500/10 rounded-2xl animate-in zoom-in-95 duration-300">
+              <div className="flex justify-between items-start mb-4">
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-tight">Adjusted CB for <span className="text-teal-600">{cbData.shipId}</span></p>
+                <span className="text-[10px] font-mono text-slate-400">{cbData.year}</span>
+              </div>
+              
+              <div className="flex items-baseline gap-2 mb-6">
+                <span className={`text-4xl font-black ${cbData.adjustedCb >= 0 ? "text-emerald-500" : "text-rose-500"}`}>
+                  {cbData.adjustedCb.toLocaleString(undefined, {maximumFractionDigits: 0})}
+                </span>
+                <span className="text-xs font-medium text-slate-400">gCO₂eq</span>
+              </div>
 
-      {/* Apply banked CB */}
-      <div className="bg-gray-50 p-4 rounded border">
-        <h3 className="font-semibold mb-3">2. Apply Banked Surplus to another vessel</h3>
-        <div className="flex items-center space-x-2">
-          <span>From <strong>{shipId || "[Select Ship]"}</strong></span>
-          <span>to:</span>
-          <input 
-            type="text" 
-            placeholder="Target Ship ID" 
-            value={targetShipId} 
-            onChange={e => setTargetShipId(e.target.value)}
-            className="border p-2 rounded w-32"
-          />
-          <span>Amount:</span>
-          <input 
-            type="number" 
-            value={amount} 
-            onChange={e => setAmount(Number(e.target.value))}
-            className="border p-2 rounded w-32"
-          />
-          <button 
-             onClick={handleApply} 
-             disabled={!shipId || !targetShipId || amount <= 0 || !cbData || cbData.adjustedCb <= 0}
-             className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
-          >
-             Apply
-          </button>
+              {cbData.adjustedCb > 0 && (
+                <button 
+                  onClick={handleBank} 
+                  className="w-full bg-emerald-500 text-white text-[11px] font-black uppercase tracking-widest py-3 rounded-xl shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-600"
+                >
+                  BANK SURPLUS FOR ARTICLE 20
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Apply banked CB */}
+        <div className="bg-white dark:bg-slate-900/40 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm relative overflow-hidden">
+          {!cbData && (
+             <div className="absolute inset-0 z-10 bg-white/60 dark:bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center p-12 text-center text-slate-400 italic">
+               Select a vessel and check balance to enable transfer operations.
+             </div>
+          )}
+          
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-8 h-8 rounded-lg bg-teal-500/10 flex items-center justify-center">
+              <span className="text-teal-600 font-bold text-xs">02</span>
+            </div>
+            <h3 className="font-bold text-slate-900 dark:text-white">Apply Banked Surplus</h3>
+          </div>
+
+          <div className="space-y-6">
+            <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+               <span className="text-[10px] font-bold text-slate-400 uppercase">Transfer From</span>
+               <p className="font-bold text-teal-600 truncate">{shipId || "N/A"}</p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Recipient Ship ID</label>
+                <input 
+                  type="text" 
+                  placeholder="Target Ship ID" 
+                  value={targetShipId} 
+                  onChange={e => setTargetShipId(e.target.value)}
+                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Allocation Amount (gCO₂eq)</label>
+                <input 
+                  type="number" 
+                  value={amount} 
+                  onChange={e => setAmount(Number(e.target.value))}
+                   className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all font-mono font-bold"
+                />
+              </div>
+
+              <button 
+                 onClick={handleApply} 
+                 disabled={!shipId || !targetShipId || amount <= 0 || !cbData || cbData.adjustedCb <= 0}
+                 className="w-full bg-teal-600 text-white font-bold py-4 rounded-2xl disabled:opacity-30 disabled:grayscale transition-all hover:shadow-xl hover:shadow-teal-500/20"
+              >
+                 AUTHORIZE TRANSFER
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       {message && (
-        <div className={`p-4 rounded ${message.type === 'error' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
-          {message.text}
+        <div className={`p-5 rounded-2xl text-sm font-bold border animate-in slide-in-from-bottom-4 duration-500 ${message.type === 'error' ? 'bg-rose-50 border-rose-100 text-rose-600 dark:bg-rose-900/10 dark:border-rose-900/20' : 'bg-emerald-50 border-emerald-100 text-emerald-600 dark:bg-emerald-900/10 dark:border-emerald-900/20'}`}>
+          <div className="flex items-center gap-3">
+             <div className={`w-2 h-2 rounded-full ${message.type === 'error' ? 'bg-rose-500' : 'bg-emerald-500'}`}></div>
+             {message.text}
+          </div>
         </div>
       )}
     </div>

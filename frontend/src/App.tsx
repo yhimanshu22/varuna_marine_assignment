@@ -8,48 +8,84 @@ function App() {
   const [activeTab, setActiveTab] = useState<'routes' | 'compare' | 'banking' | 'pooling'>('routes')
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center">
-      <header className="w-full bg-blue-900 text-white p-6 shadow-md">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold tracking-wider">FuelEU Maritime Dashboard</h1>
+    <div className="min-h-screen bg-[#fafbfc] dark:bg-[#0b1a1e] flex flex-col font-sans grain">
+      <header className="sticky top-0 z-50 glass border-b border-[var(--border)]">
+        <div className="mx-auto max-w-[1600px] flex items-center justify-between px-4 sm:px-6 lg:px-10 h-[68px]">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0f766e] to-[#14b8a6] flex items-center justify-center shadow-lg shadow-teal-500/20">
+              <span className="text-white font-bold">V</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="font-bold text-lg leading-none text-[var(--text-h)]">Varuna Marine Services</span>
+              <span className="text-[10px] text-teal-600 dark:text-teal-400 font-semibold uppercase tracking-wider">Compliance Dashboard</span>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-6">
+            <nav className="hidden md:flex items-center gap-1">
+              <button className="px-4 py-2 text-sm font-medium text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/30 rounded-lg">Overview</button>
+              <button className="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-200">Reports</button>
+              <button className="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-200">Settings</button>
+            </nav>
+            <button className="px-5 py-2 text-sm font-semibold text-white rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/25 bg-gradient-to-r from-[#0f766e] to-[#14b8a6]">
+              Client Portal
+            </button>
+          </div>
         </div>
       </header>
 
-      <main className="flex-1 w-full max-w-6xl p-6 mt-4">
-        {/* Tabs */}
-        <div className="flex space-x-1 bg-white p-1 rounded-t-lg shadow-sm border-b mb-6">
-          <button 
-            className={`px-6 py-3 font-semibold rounded-md ${activeTab === 'routes' ? 'bg-blue-100 text-blue-800' : 'text-gray-500 hover:bg-gray-100'}`}
-            onClick={() => setActiveTab('routes')}
-          >
-            Routes
-          </button>
-          <button 
-            className={`px-6 py-3 font-semibold rounded-md ${activeTab === 'compare' ? 'bg-blue-100 text-blue-800' : 'text-gray-500 hover:bg-gray-100'}`}
-            onClick={() => setActiveTab('compare')}
-          >
-            Compare
-          </button>
-          <button 
-            className={`px-6 py-3 font-semibold rounded-md ${activeTab === 'banking' ? 'bg-blue-100 text-blue-800' : 'text-gray-500 hover:bg-gray-100'}`}
-            onClick={() => setActiveTab('banking')}
-          >
-            Banking
-          </button>
-          <button 
-            className={`px-6 py-3 font-semibold rounded-md ${activeTab === 'pooling' ? 'bg-blue-100 text-blue-800' : 'text-gray-500 hover:bg-gray-100'}`}
-            onClick={() => setActiveTab('pooling')}
-          >
-            Pooling
-          </button>
-        </div>
+      <main className="flex-1 w-full mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-10 py-8">
+        {/* Side-by-side Layout or Tabs? Let's use clean Glass Tabs */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <aside className="lg:col-span-2">
+            <nav className="flex flex-col gap-2">
+              <button 
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'routes' ? 'bg-white dark:bg-slate-800 shadow-sm border border-[var(--border)] text-teal-700 dark:text-teal-400 font-bold' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800/50'}`}
+                onClick={() => setActiveTab('routes')}
+              >
+                <div className={`w-2 h-2 rounded-full ${activeTab === 'routes' ? 'bg-teal-500' : 'bg-slate-300'}`}></div>
+                Routes
+              </button>
+              <button 
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'compare' ? 'bg-white dark:bg-slate-800 shadow-sm border border-[var(--border)] text-teal-700 dark:text-teal-400 font-bold' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800/50'}`}
+                onClick={() => setActiveTab('compare')}
+              >
+                <div className={`w-2 h-2 rounded-full ${activeTab === 'compare' ? 'bg-teal-500' : 'bg-slate-300'}`}></div>
+                Analytics
+              </button>
+              <button 
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'banking' ? 'bg-white dark:bg-slate-800 shadow-sm border border-[var(--border)] text-teal-700 dark:text-teal-400 font-bold' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800/50'}`}
+                onClick={() => setActiveTab('banking')}
+              >
+                <div className={`w-2 h-2 rounded-full ${activeTab === 'banking' ? 'bg-teal-500' : 'bg-slate-300'}`}></div>
+                Banking
+              </button>
+              <button 
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'pooling' ? 'bg-white dark:bg-slate-800 shadow-sm border border-[var(--border)] text-teal-700 dark:text-teal-400 font-bold' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800/50'}`}
+                onClick={() => setActiveTab('pooling')}
+              >
+                <div className={`w-2 h-2 rounded-full ${activeTab === 'pooling' ? 'bg-teal-500' : 'bg-slate-300'}`}></div>
+                Pooling
+              </button>
+            </nav>
+            
+            <div className="mt-12 p-4 rounded-2xl bg-gradient-to-br from-teal-500/5 to-teal-500/10 border border-teal-500/10">
+              <h4 className="text-xs font-bold text-teal-700 dark:text-teal-400 uppercase tracking-widest mb-2">Platform Status</h4>
+              <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                Connected to API
+              </div>
+            </div>
+          </aside>
 
-        {/* Tab Content */}
-        <div className="bg-white p-6 rounded-b-lg shadow-md border-x border-b min-h-[500px]">
-          {activeTab === 'routes' && <RoutesTab />}
-          {activeTab === 'compare' && <CompareTab />}
-          {activeTab === 'banking' && <BankingTab />}
-          {activeTab === 'pooling' && <PoolingTab />}
+          <section className="lg:col-span-10">
+            <div className="bg-white dark:bg-slate-800/50 rounded-3xl p-8 shadow-xl shadow-slate-200/50 dark:shadow-none border border-[var(--border)] min-h-[600px]">
+              {activeTab === 'routes' && <RoutesTab />}
+              {activeTab === 'compare' && <CompareTab />}
+              {activeTab === 'banking' && <BankingTab />}
+              {activeTab === 'pooling' && <PoolingTab />}
+            </div>
+          </section>
         </div>
       </main>
     </div>
