@@ -7,7 +7,7 @@ export class PrismaRouteRepository implements IRouteRepository {
 
   async getAllRoutes(): Promise<Route[]> {
     const routes = await this.prisma.route.findMany();
-    return routes.map(r => r as Route);
+    return routes.map((r: any) => r as Route);
   }
 
   async getRouteById(id: string): Promise<Route | null> {

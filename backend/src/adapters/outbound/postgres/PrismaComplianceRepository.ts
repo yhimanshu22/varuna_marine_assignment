@@ -33,7 +33,7 @@ export class PrismaComplianceRepository implements IComplianceRepository {
     const records = await this.prisma.bankEntry.findMany({
       where: { shipId, year }
     });
-    return records.map(r => r as BankEntry);
+    return records.map((r: any) => r as BankEntry);
   }
 
   async saveBankEntry(entry: BankEntry): Promise<void> {
@@ -48,7 +48,7 @@ export class PrismaComplianceRepository implements IComplianceRepository {
   }
 
   async createPool(pool: Pool, members: PoolMember[]): Promise<Pool> {
-    return await this.prisma.$transaction(async (tx) => {
+    return await this.prisma.$transaction(async (tx: any) => {
       const createdPool = await tx.pool.create({
         data: {
           id: pool.id,
